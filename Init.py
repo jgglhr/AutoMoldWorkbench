@@ -1,0 +1,3 @@
+"""
+AutoMold Workbench initialization.
+"""

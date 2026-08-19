@@ -1,0 +1,38 @@
+# ============================================================
+# AutoMoldWorkbench - Git Ignore
+# ============================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*.class
+
+# Ambiente virtual
+.venv/
+venv/
+env/
+
+# Backups locais
+bkp/
+
+# FreeCAD arquivos temporários / backups
+*.FCStd1
+*.FCStd2
+*.FCStd3
+*.FCBak
+*.FCStd#
+
+# Sistema operacional
+Thumbs.db
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.bak
