@@ -2,12 +2,12 @@
 AutoMoldWorkbench - Geometry Core
 =================================
 
-Funções básicas para análise de geometria no FreeCAD.
+FunÃƒÂ§ÃƒÂµes bÃƒÂ¡sicas para anÃƒÂ¡lise de geometria no FreeCAD.
 
-Este módulo não cria moldes.
-Sua responsabilidade inicial é analisar uma geometria
-existente e fornecer informações normalizadas para os
-módulos posteriores do AutoMoldWorkbench.
+Este mÃƒÂ³dulo nÃƒÂ£o cria moldes.
+Sua responsabilidade inicial ÃƒÂ© analisar uma geometria
+existente e fornecer informaÃƒÂ§ÃƒÂµes normalizadas para os
+mÃƒÂ³dulos posteriores do AutoMoldWorkbench.
 """
 
 import FreeCAD
@@ -16,26 +16,26 @@ from automold.logger import logger
 
 
 class GeometryError(Exception):
-    """Erro relacionado à análise geométrica."""
+    """Erro relacionado ÃƒÂ  anÃƒÂ¡lise geomÃƒÂ©trica."""
 
 
 class GeometryAnalyzer:
     """
-    Analisa objetos geométricos do FreeCAD.
+    Analisa objetos geomÃƒÂ©tricos do FreeCAD.
 
     O objeto analisado deve possuir uma propriedade
-    Shape válida.
+    Shape vÃƒÂ¡lida.
     """
 
     def __init__(self, obj):
         self.obj = obj
 
         if obj is None:
-            raise GeometryError("Objeto FreeCAD não informado.")
+            raise GeometryError("Objeto FreeCAD nÃƒÂ£o informado.")
 
         if not hasattr(obj, "Shape"):
             raise GeometryError(
-                "O objeto informado não possui uma propriedade Shape."
+                "O objeto informado nÃƒÂ£o possui uma propriedade Shape."
             )
 
         if obj.Shape.isNull():
@@ -52,7 +52,7 @@ class GeometryAnalyzer:
 
     def is_valid(self):
         """
-        Verifica se a geometria é válida.
+        Verifica se a geometria ÃƒÂ© vÃƒÂ¡lida.
 
         Retorna:
             bool
@@ -69,7 +69,7 @@ class GeometryAnalyzer:
 
     def is_solid(self):
         """
-        Verifica se a geometria contém pelo menos um sólido.
+        Verifica se a geometria contÃƒÂ©m pelo menos um sÃƒÂ³lido.
 
         Retorna:
             bool
@@ -79,7 +79,7 @@ class GeometryAnalyzer:
             return len(self.shape.Solids) > 0
         except Exception as exc:
             logger.error(
-                "Erro ao verificar sólidos: %s",
+                "Erro ao verificar sÃƒÂ³lidos: %s",
                 exc
             )
             return False
@@ -96,7 +96,7 @@ class GeometryAnalyzer:
 
     def dimensions(self):
         """
-        Retorna as dimensões X, Y e Z da geometria.
+        Retorna as dimensÃƒÂµes X, Y e Z da geometria.
 
         Retorna:
             dict:
@@ -154,7 +154,7 @@ class GeometryAnalyzer:
 
     def vertex_count(self):
         """
-        Retorna a quantidade de vértices da geometria.
+        Retorna a quantidade de vÃƒÂ©rtices da geometria.
 
         Retorna:
             int
@@ -165,7 +165,7 @@ class GeometryAnalyzer:
 
         except Exception as exc:
             logger.error(
-                "Erro ao contar vértices: %s",
+                "Erro ao contar vÃƒÂ©rtices: %s",
                 exc
             )
 
@@ -173,7 +173,7 @@ class GeometryAnalyzer:
 
     def surface_area(self):
         """
-        Retorna a área superficial total da geometria.
+        Retorna a ÃƒÂ¡rea superficial total da geometria.
 
         Retorna:
             float
@@ -184,12 +184,12 @@ class GeometryAnalyzer:
 
         except Exception as exc:
             logger.error(
-                "Erro ao obter área superficial: %s",
+                "Erro ao obter ÃƒÂ¡rea superficial: %s",
                 exc
             )
 
             raise GeometryError(
-                "Não foi possível obter a área superficial."
+                "NÃƒÂ£o foi possÃƒÂ­vel obter a ÃƒÂ¡rea superficial."
             ) from exc
 
     def volume(self):
@@ -208,12 +208,12 @@ class GeometryAnalyzer:
                 exc
             )
             raise GeometryError(
-                "Não foi possível obter o volume."
+                "NÃƒÂ£o foi possÃƒÂ­vel obter o volume."
             ) from exc
 
     def center(self):
         """
-        Retorna o centro geométrico da Bounding Box.
+        Retorna o centro geomÃƒÂ©trico da Bounding Box.
 
         Retorna:
             dict:
@@ -235,7 +235,7 @@ class GeometryAnalyzer:
         }
     def face_surfaces(self):
         """
-        Analisa as superfícies de todas as faces.
+        Analisa as superfÃƒÂ­cies de todas as faces.
 
         Retorna:
             list[dict]
@@ -286,7 +286,7 @@ class GeometryAnalyzer:
 
     def surface_types(self):
         """
-        Retorna a quantidade de faces por tipo de superfície.
+        Retorna a quantidade de faces por tipo de superfÃƒÂ­cie.
 
         Exemplo:
 
@@ -310,10 +310,102 @@ class GeometryAnalyzer:
 
         return result
 
+    def face_normals(self):
+        """
+        Retorna a normal geomÃƒÂ©trica de cada face.
+
+        Retorna:
+            list[dict]
+        """
+
+        normals = []
+
+        for index, face in enumerate(
+            self.shape.Faces,
+            start=1
+        ):
+            try:
+                u_min, u_max, v_min, v_max = face.ParameterRange
+
+                u = (u_min + u_max) / 2.0
+                v = (v_min + v_max) / 2.0
+
+                normal = face.normalAt(u, v)
+
+                normals.append({
+                    "index": index,
+                    "normal": {
+                        "x": normal.x,
+                        "y": normal.y,
+                        "z": normal.z,
+                    },
+                })
+
+            except Exception as exc:
+                logger.error(
+                    "Erro ao obter normal da face %s: %s",
+                    index,
+                    exc
+                )
+
+                normals.append({
+                    "index": index,
+                    "normal": None,
+                })
+
+        return normals
+
+    def orientation_analysis(self):
+        """
+        Classifica a orientaÃƒÂ§ÃƒÂ£o predominante de cada face.
+
+        Retorna:
+            list[dict]
+        """
+
+        orientations = []
+
+        for item in self.face_normals():
+
+            index = item["index"]
+            normal = item["normal"]
+
+            if normal is None:
+                orientations.append({
+                    "index": index,
+                    "orientation": "UNKNOWN",
+                })
+                continue
+
+            x = normal["x"]
+            y = normal["y"]
+            z = normal["z"]
+
+            values = {
+                "X_NEGATIVE": -x,
+                "X_POSITIVE": x,
+                "Y_NEGATIVE": -y,
+                "Y_POSITIVE": y,
+                "Z_NEGATIVE": -z,
+                "Z_POSITIVE": z,
+            }
+
+            orientation = max(
+                values,
+                key=values.get
+            )
+
+            orientations.append({
+                "index": index,
+                "orientation": orientation,
+                "normal": normal,
+            })
+
+        return orientations
 
     def summary(self):
         """
-        Retorna um resumo da geometria analisada.
+        Retorna um resumo completo da geometria analisada.
 
         Retorna:
             dict
@@ -325,28 +417,44 @@ class GeometryAnalyzer:
                 "Name",
                 None
             ),
+
             "label": getattr(
                 self.obj,
                 "Label",
                 None
             ),
+
             "valid": self.is_valid(),
+
             "solid": self.is_solid(),
+
             "volume": self.volume(),
+
             "center": self.center(),
+
             "faces": self.face_count(),
+
             "edges": self.edge_count(),
+
             "vertices": self.vertex_count(),
+
             "surface_area": self.surface_area(),
+
             "dimensions": self.dimensions(),
+
             "surface_types": self.surface_types(),
+
             "surfaces": self.face_surfaces(),
+
+            "normals": self.face_normals(),
+
+            "orientations": self.orientation_analysis(),
         }
 
 
 def analyze_object(obj):
     """
-    Função auxiliar para analisar diretamente
+    FunÃƒÂ§ÃƒÂ£o auxiliar para analisar diretamente
     um objeto FreeCAD.
 
     Retorna:
