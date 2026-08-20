@@ -114,6 +114,83 @@ class GeometryAnalyzer:
             "y": box.YLength,
             "z": box.ZLength,
         }
+    def face_count(self):
+        """
+        Retorna a quantidade de faces da geometria.
+
+        Retorna:
+            int
+        """
+
+        try:
+            return len(self.shape.Faces)
+
+        except Exception as exc:
+            logger.error(
+                "Erro ao contar faces: %s",
+                exc
+            )
+
+            return 0
+
+    def edge_count(self):
+        """
+        Retorna a quantidade de arestas da geometria.
+
+        Retorna:
+            int
+        """
+
+        try:
+            return len(self.shape.Edges)
+
+        except Exception as exc:
+            logger.error(
+                "Erro ao contar arestas: %s",
+                exc
+            )
+
+            return 0
+
+    def vertex_count(self):
+        """
+        Retorna a quantidade de vértices da geometria.
+
+        Retorna:
+            int
+        """
+
+        try:
+            return len(self.shape.Vertexes)
+
+        except Exception as exc:
+            logger.error(
+                "Erro ao contar vértices: %s",
+                exc
+            )
+
+            return 0
+
+    def surface_area(self):
+        """
+        Retorna a área superficial total da geometria.
+
+        Retorna:
+            float
+        """
+
+        try:
+            return self.shape.Area
+
+        except Exception as exc:
+            logger.error(
+                "Erro ao obter área superficial: %s",
+                exc
+            )
+
+            raise GeometryError(
+                "Não foi possível obter a área superficial."
+            ) from exc
 
     def volume(self):
         """
@@ -178,9 +255,14 @@ class GeometryAnalyzer:
             ),
             "valid": self.is_valid(),
             "solid": self.is_solid(),
-            "dimensions": self.dimensions(),
             "volume": self.volume(),
             "center": self.center(),
+            "faces": self.face_count(),
+            "edges": self.edge_count(),
+            "vertices": self.vertex_count(),
+            "surface_area": self.surface_area(),
+            "dimensions": self.dimensions(),
+            
         }
 
 
