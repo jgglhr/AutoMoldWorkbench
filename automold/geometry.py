@@ -233,6 +233,83 @@ class GeometryAnalyzer:
             "y": center.y,
             "z": center.z,
         }
+    def face_surfaces(self):
+        """
+        Analisa as superfícies de todas as faces.
+
+        Retorna:
+            list[dict]
+        """
+
+        surfaces = []
+
+        for index, face in enumerate(
+            self.shape.Faces,
+            start=1
+        ):
+            try:
+                surface = face.Surface
+                surface_type = surface.__class__.__name__
+
+                center = face.CenterOfMass
+
+                surfaces.append({
+                    "index": index,
+                    "type": surface_type,
+                    "area": face.Area,
+                    "center": {
+                        "x": center.x,
+                        "y": center.y,
+                        "z": center.z,
+                    },
+                })
+
+            except Exception as exc:
+                logger.error(
+                    "Erro ao analisar face %s: %s",
+                    index,
+                    exc
+                )
+
+                surfaces.append({
+                    "index": index,
+                    "type": "Unknown",
+                    "area": 0.0,
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0,
+                    },
+                })
+
+        return surfaces
+
+    def surface_types(self):
+        """
+        Retorna a quantidade de faces por tipo de superfície.
+
+        Exemplo:
+
+            {
+                "Plane": 6,
+                "Cylinder": 2
+            }
+
+        Retorna:
+            dict
+        """
+
+        result = {}
+
+        for surface in self.face_surfaces():
+            surface_type = surface["type"]
+
+            result[surface_type] = (
+                result.get(surface_type, 0) + 1
+            )
+
+        return result
+
 
     def summary(self):
         """
@@ -262,7 +339,8 @@ class GeometryAnalyzer:
             "vertices": self.vertex_count(),
             "surface_area": self.surface_area(),
             "dimensions": self.dimensions(),
-            
+            "surface_types": self.surface_types(),
+            "surfaces": self.face_surfaces(),
         }
 
 
